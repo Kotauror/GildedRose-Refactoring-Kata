@@ -19,12 +19,12 @@ describe ItemsPrinter do
   end
 
   context 'Printing Items' do
-    describe '#print_items(items)' do
+    describe '#print_items(items, number)' do
       it 'prints information about the items' do
         allow(vest).to receive(:show_data).and_return("Vest, 1, 10")
         allow(brie).to receive(:show_data).and_return("Aged Brie, 2, 0")
-        expect{items_printer.print_items([vest, brie])}.to output(
-          "-------- day 0 --------\n" +
+        expect{items_printer.print_items([vest, brie], 1)}.to output(
+          "-------- day 1 --------\n" +
           "name, sellIn, quality\n" +
           "Vest, 1, 10\nAged Brie, 2, 0\n\n"
         ).to_stdout

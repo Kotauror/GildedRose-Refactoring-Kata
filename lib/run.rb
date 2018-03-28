@@ -16,4 +16,9 @@ items = [
 
 rose = GildedRose.new(items)
 printer = ItemsPrinter.new(5)
-printer.print_items(rose)
+number = printer.days
+for i in 0..number do
+  printer.print_items(items, number)
+  rose.update_data
+  i += 1
+end
