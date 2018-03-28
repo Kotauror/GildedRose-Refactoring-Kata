@@ -5,7 +5,7 @@ class ItemsPrinter
 
   attr_reader :days
 
-  def initialize(days)
+  def initialize(days = 3)
     @days = days
   end
 
