@@ -14,7 +14,7 @@ or just
 
 ```plain
 $ cd lib
-% ruby run.rb
+$ ruby run.rb
 ```
 
 In order to see the tests:

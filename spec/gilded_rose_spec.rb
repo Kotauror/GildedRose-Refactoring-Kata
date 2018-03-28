@@ -21,7 +21,7 @@ describe GildedRose do
   vest = ItemDouble.new("+5 Dexterity Vest", 1, 10)
   vest_0_s = ItemDouble.new("+5 Dexterity Vest", 0, 10)
   vest_0_q = ItemDouble.new("+5 Dexterity Vest", 10, 0)
-  brie = ItemDouble.new("Aged Brie", 2, 0)
+  # brie = ItemDouble.new("Aged Brie", 2, 0)
   quality_brie = ItemDouble.new("Aged Brie", 2, 50)
   elixir = ItemDouble.new("Elixir of the Mongoose", 5, 7)
   elixir_zero = ItemDouble.new("Elixir of the Mongoose", 0, 7)
@@ -36,7 +36,7 @@ describe GildedRose do
   cake_zero = ItemDouble.new("Conjured Mana Cake", 3, 0)
 
   # let(:vest) {double('+5 Dexterity Vest', :name => 'Vest', :sell_in => 1, :quality => 10)}
-  # let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
+  let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
   # let(:elixir) {double('Elixir of the Mongoose', :name => 'Elixir of the Mongoose', :sell_in => 5, :quality => 7)}
   # let(:sulfuras1) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 0, :quality => 80)}
   # let(:sulfuras2) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 1, :quality => 80)}

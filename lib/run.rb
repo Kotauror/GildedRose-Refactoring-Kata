@@ -15,7 +15,7 @@ items = [
 ]
 
 rose = GildedRose.new(items)
-printer = ItemsPrinter.new(5)
+printer = ItemsPrinter.new(2)
 
 for i in 0..printer.days do
   printer.print_items(items, i)
