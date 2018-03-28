@@ -1,3 +1,6 @@
+require_relative 'item'
+
+
 class GildedRose
 
   attr_reader :items

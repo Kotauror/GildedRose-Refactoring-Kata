@@ -9,16 +9,16 @@ class ItemsPrinter
     @days = days
   end
 
-  def print_items(items)
+  def print_items(rose)
     days = @days
     (0...days).each do |day|
       puts "-------- day #{day} --------"
       puts "name, sellIn, quality"
-      items.each do |item|
+      rose.items.each do |item|
         puts item.show_data
       end
       puts ""
-      # update quality somewhere here
+      rose.update_data
     end
   end
 
