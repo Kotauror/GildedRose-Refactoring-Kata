@@ -124,4 +124,13 @@ describe GildedRose do
     end
   end
 
+  context 'updating sell_in date' do
+    describe '#decrease_sell_in' do
+      it 'decreases the sell_in by 1' do
+        rose.decrease_sell_in(vest)
+        expect(vest.sell_in).to eq 0
+      end
+    end
+  end
+
 end
