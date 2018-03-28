@@ -12,12 +12,22 @@ describe GildedRose do
   let(:backstage3) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 5, :quality => 49)}
   let(:cake) {double('Mana cake', :name => 'Conjured Mana Cake', :sell_in => 3, :quality => 6)}
 
-  subject(:rose) { described_class.new([vest, brie]) }
+  subject(:rose) { described_class.new([vest, brie, elixir, sulfuras1, sulfuras2, backstage1, backstage2, backstage3, cake]) }
 
   context 'Initialization' do
     describe '#initialize' do
       it 'is initialized with an array of items' do
-        expect(rose.items).to eq [vest, brie]
+        expect(rose.items).to eq [vest, brie, elixir, sulfuras1, sulfuras2, backstage1, backstage2, backstage3, cake]
+      end
+    end
+  end
+
+  context 'Updating quality' do
+    describe 'update_brie' do
+      it 'updates the quality of the brie' do
+        # allow(brie).to receive(:quality).and_return 1
+        rose.update_brie(brie)
+        expect(brie.quality).to eq 1
       end
     end
   end
