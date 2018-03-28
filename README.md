@@ -1,49 +1,189 @@
 # Gilded Rose Refactoring Kata
 
-This Kata was originally created by Terry Hughes (http://twitter.com/#!/TerryHughes). It is already on GitHub [here](https://github.com/NotMyself/GildedRose). See also [Bobby Johnson's description of the kata](http://iamnotmyself.com/2011/02/13/refactor-this-the-gilded-rose-kata/).
+This is my attempt at Gilded Rose Refactoring Kata.
 
-I translated the original C# into a few other languages, (with a little help from my friends!), and slightly changed the starting position. This means I've actually done a small amount of refactoring already compared with the original form of the kata, and made it easier to get going with writing tests by giving you one failing unit test to start with. I also added test fixtures for Text-Based approval testing with TextTest (see [the TextTests](https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/master/texttests))
+## How to run the program
 
-As Bobby Johnson points out in his article ["Why Most Solutions to Gilded Rose Miss The Bigger Picture"](http://iamnotmyself.com/2012/12/07/why-most-solutions-to-gilded-rose-miss-the-bigger-picture), it'll actually give you
-better practice at handling a legacy code situation if you do this Kata in the original C#. However, I think this kata
-is also really useful for practicing writing good tests using different frameworks and approaches, and the small changes I've made help with that. I think it's also interesting to compare what the refactored code and tests look like in different programming languages.
+```plain
+$ git clone https://github.com/Kotauror/GildedRose-Refactoring-Kata
+$ cd GildedRose-Refactoring-Kata
+```
 
-I wrote this article ["Writing Good Tests for the Gilded Rose Kata"](http://coding-is-like-cooking.info/2013/03/writing-good-tests-for-the-gilded-rose-kata/) about how you could use this kata in a [coding dojo](https://leanpub.com/codingdojohandbook).
+open run.rb to change the configuration first (see the configuration paragraph below)
+or just
 
-## How to use this Kata
+```plain
+$ cd lib
+% ruby run.rb
+```
 
-The simplest way is to just clone the code and start hacking away improving the design. You'll want to look at the ["Gilded Rose Requirements"](https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/master/GildedRoseRequirements.txt) which explains what the code is for. I strongly advise you that you'll also need some tests if you want to make sure you don't break the code while you refactor.
+In order to see the tests:
 
-You could write some unit tests yourself, using the requirements to identify suitable test cases. I've provided a failing unit test in a popular test framework as a starting point for most languages.
+```plain
+$ rspec -fd
+```
 
-Alternatively, use the "Text-Based" tests provided in this repository. (Read more about that in the next section)
+## Example of use
+*(See how the values are changing)*
 
-Whichever testing approach you choose, the idea of the exercise is to do some deliberate practice, and improve your skills at designing test cases and refactoring. The idea is not to re-write the code from scratch, but rather to practice designing tests, taking small steps, running the tests often, and incrementally improving the design. 
+![Example of use](/images/screen.png)
 
-## Text-Based Approval Testing
 
-This is a testing approach which is very useful when refactoring legacy code. Before you change the code, you run it, and gather the output of the code as a plain text file. You review the text, and if it correctly describes the behaviour as you understand it, you can "approve" it, and save it as a "Golden Master". Then after you change the code, you run it again, and compare the new output against the Golden Master. Any differences, and the test fails.
+## Approach
 
-It's basically the same idea as "assertEquals(expected, actual)" in a unit test, except the text you are comparing is typically much longer, and the "expected" value is saved from actual output, rather than being defined in advance.
+* I've took significant amount of time to understand what is going on in the code and how to start cleaning it up.
+* I've started from:
+  - deleting files that were unnecessary to the program;
+  - refactoring lines which were unnecessary complicated;
+  - extracting `Item` class to a separate file;
+  - creating an `ItemsPrinter` class responsible for printing the output;
+  - creating an `items_samples` file with all of the `Items`.
+* Then I've TDD the `Item` class and `ItemsPrinter`.
+* Once the classes were working, I've started to think how to clean up the huge `update_quality` method.
 
-Typically a piece of legacy code may not produce suitable textual output from the start, so you may need to modify it before you can write your first text-based approval test. That could involve inserting log statements into the code, or just writing a "main" method that executes the code and prints out what the result is afterwards. It's this latter approach we are using here to test GildedRose.
+This is how it looked:
 
-The Text-Based tests in this repository are designed to be used with the tool "TextTest" (http://texttest.org). This tool helps you to organize and run text-based tests. There is more information in the README file in the "texttests" subdirectory.
+```ruby
+def update_quality()
+  @items.each do |item|
+    if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
+      if item.quality > 0
+        if item.name != "Sulfuras, Hand of Ragnaros"
+          item.quality = item.quality - 1
+        end
+      end
+    else
+      if item.quality < 50
+        item.quality = item.quality + 1
+        if item.name == "Backstage passes to a TAFKAL80ETC concert"
+          if item.sell_in < 11
+            if item.quality < 50
+              item.quality = item.quality + 1
+            end
+          end
+          if item.sell_in < 6
+            if item.quality < 50
+              item.quality = item.quality + 1
+            end
+          end
+        end
+      end
+    end
+    if item.name != "Sulfuras, Hand of Ragnaros"
+      item.sell_in = item.sell_in - 1
+    end
+    if item.sell_in < 0
+      if item.name != "Aged Brie"
+        if item.name != "Backstage passes to a TAFKAL80ETC concert"
+          if item.quality > 0
+            if item.name != "Sulfuras, Hand of Ragnaros"
+              item.quality = item.quality - 1
+            end
+          end
+        else
+          item.quality = item.quality - item.quality
+        end
+      else
+        if item.quality < 50
+          item.quality = item.quality + 1
+        end
+      end
+    end
+  end
+end
+```
+* I've realised that the content of all of the if statements depend on the name of the `Item`. Therefore I've decided to divide the `update_quality` into smaller methods, each for one name of an `Item`.
+* In order to do that I've used a case statement:
 
-## Get going quickly using Cyber-Dojo
+```ruby
+def update_data()
+  @items.each do |item|
+    name = item.name
+    case name
+      when "Aged Brie"
+        update_brie(item)
+        decrease_sell_in(item)
+      when "+5 Dexterity Vest"
+        update_vest(item)
+        decrease_sell_in(item)
+      when "Elixir of the Mongoose"
+        update_elixir(item)
+        decrease_sell_in(item)
+      when "Sulfuras, Hand of Ragnaros"
+        update_sulfuras(item)
+      when "Backstage passes to a TAFKAL80ETC concert"
+        update_backstage(item)
+        decrease_sell_in(item)
+      when "Conjured Mana Cake"
+        update_cake(item)
+        decrease_sell_in(item)
+    end
+  end
+end
+```
 
-I've also set this kata up on [cyber-dojo](http://cyber-dojo.org) for several languages, so you can get going really quickly:
+* I've renamed the method from `update_quality` to update_data, as it is updating both quality and `sell_in`.
+* Creation of many small functions made it far easier to test.
 
-- [JUnit, Java](http://cyber-dojo.org/forker/fork/751DD02C4C?avatar=snake&tag=8)
-- [C#](http://cyber-dojo.org/forker/fork/5C5AC766B0?avatar=koala&tag=3)
-- [C++](http://cyber-dojo.org/forker/fork/AA86ECBCC9?avatar=rhino&tag=7)
-- [Ruby](http://cyber-dojo.org/forker/fork/A8943EAF92?avatar=hippo&tag=9)
-- [RSpec, Ruby](http://cyber-dojo.org/forker/fork/8E58B0AD16?avatar=raccoon&tag=3)
-- [Python](http://cyber-dojo.org/forker/fork/297041AA7A?avatar=lion&tag=4)
-- [Cucumber, Java](http://cyber-dojo.org/forker/fork/0F82D4BA89?avatar=gorilla&tag=48) - for this one I've also written some step definitions for you
+## Configuration
 
-## Better Code Hub
+* In order to run the program, user need to pick desired configuration in the `run.rb` file:
+  - create Items in which the user is interessted in;
+  - define how many days the user is interessted in by passing an argument to the `ItemsPrinter` (by default it's 3).
 
-I analysed this repo according to the clean code standards on [Better Code Hub](https://bettercodehub.com) just to get an independent opinion of how bad the code is. Perhaps unsurprisingly, the compliance score is low!
+```ruby
+  printer = ItemsPrinter.new()
+```
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/emilybache/GildedRose-Refactoring-Kata?branch=master)](https://bettercodehub.com/) 
+## Problems I've encountered
+
+I had serious problems with stubbing attr_readers in the gilded_rose_spec. Initially all my items were meant to be doubles:
+
+```ruby
+let(:vest) {double('+5 Dexterity Vest', :name => 'Vest', :sell_in => 1, :quality => 10)}
+let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
+let(:elixir) {double('Elixir of the Mongoose', :name => 'Elixir of the Mongoose', :sell_in => 5, :quality => 7)}
+let(:sulfuras1) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 0, :quality => 80)}
+let(:sulfuras2) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 1, :quality => 80)}
+let(:backstage1) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 15, :quality => 20)}
+let(:backstage2) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 10, :quality => 49)}
+let(:backstage3) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 5, :quality => 49)}
+let(:cake) {double('Mana cake', :name => 'Conjured Mana Cake', :sell_in => 3, :quality => 6)}
+```
+
+Inside of my functions I was changing the `sell_in` and `quality` properties. The doubles weren't changning though. I spend almost 2 hours on googling how to stub `attr_reader` without a success.
+
+Because of the fact, I've decided to create an `ItemDouble` class inside of the gilded_rose_spec, that was in face a mirror reflection of the `Item` class. This was I kept my `Item` class isolated and was able to avoid the `attr_reader` problem. This is how I solved it:
+
+```ruby
+class ItemDouble
+
+  attr_accessor :name, :sell_in, :quality
+
+  def initialize(name, sell_in, quality)
+    @name = name
+    @sell_in = sell_in
+    @quality = quality
+  end
+
+  def show_data
+    "#{@name}, #{@sell_in}, #{@quality}"
+  end
+
+end
+
+describe GildedRose do
+
+  vest = ItemDouble.new("+5 Dexterity Vest", 1, 10)
+  brie = ItemDouble.new("Aged Brie", 2, 0)
+  quality_brie = ItemDouble.new("Aged Brie", 2, 50)
+  elixir = ItemDouble.new("Elixir of the Mongoose", 5, 7)
+  sulfuras1 = ItemDouble.new("Sulfuras, Hand of Ragnaros", 0, 80)
+  sulfuras2 = ItemDouble.new("Sulfuras, Hand of Ragnaros", 0, 81)
+  backstage0 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 0, 20)
+  backstage1 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 15, 20)
+  backstage2 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 10, 49)
+  backstage3 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 5, 49)
+  cake = ItemDouble.new("Conjured Mana Cake", 3, 6)
+  cake_zero = ItemDouble.new("Conjured Mana Cake", 3, 0)
+```
