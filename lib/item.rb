@@ -7,7 +7,7 @@ class Item
     @quality = quality
   end
 
-  def to_s()
+  def show_data
     "#{@name}, #{@sell_in}, #{@quality}"
   end
 end

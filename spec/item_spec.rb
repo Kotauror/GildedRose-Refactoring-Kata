@@ -18,4 +18,12 @@ describe Item do
     end
   end
 
+  context 'Dealing with an item ' do
+    describe '#show_data' do
+      it 'takes the item data and put them to a string' do
+        expect(item.show_data).to eq "Justyna, 5, 50"
+      end
+    end
+  end
+
 end
