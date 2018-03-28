@@ -6,7 +6,7 @@ describe ItemsPrinter do
   subject(:items_printer_no_days) { described_class.new}
   let(:vest) {double('+5 Dexterity Vest', :name => 'Vest', :sell_in => 1, :quality => 10)}
   let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
-
+  
   context 'Initialization' do
     describe '#initialize' do
       it 'is initialized with a guven number of days' do
