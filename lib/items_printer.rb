@@ -1,4 +1,9 @@
 require_relative 'gilded_rose'
+require_relative 'item'
+
+class ItemsPrinter
+end 
+
 
 puts "OMGHAI!"
 items = [
