@@ -1,6 +1,9 @@
 require 'gilded_rose'
+require 'item'
 
 describe GildedRose do
+
+  # items = ["foo", 0, 0]
 
   describe "#update_quality" do
     it "does not change the name" do
