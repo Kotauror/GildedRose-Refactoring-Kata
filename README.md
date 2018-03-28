@@ -135,55 +135,6 @@ end
   printer = ItemsPrinter.new()
 ```
 
-## Problems I've encountered
+## If I had more time
 
-I had serious problems with stubbing attr_readers in the gilded_rose_spec. Initially all my items were meant to be doubles:
-
-```ruby
-let(:vest) {double('+5 Dexterity Vest', :name => 'Vest', :sell_in => 1, :quality => 10)}
-let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
-let(:elixir) {double('Elixir of the Mongoose', :name => 'Elixir of the Mongoose', :sell_in => 5, :quality => 7)}
-let(:sulfuras1) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 0, :quality => 80)}
-let(:sulfuras2) {double('Sulfuras, Hand of Ragnaros', :name => 'Sulfuras, Hand of Ragnaros', :sell_in => 1, :quality => 80)}
-let(:backstage1) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 15, :quality => 20)}
-let(:backstage2) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 10, :quality => 49)}
-let(:backstage3) {double('Backstage passes', :name => 'Backstage passes to a TAFKAL80ETC concert', :sell_in => 5, :quality => 49)}
-let(:cake) {double('Mana cake', :name => 'Conjured Mana Cake', :sell_in => 3, :quality => 6)}
-```
-
-Inside of my functions I was changing the `sell_in` and `quality` properties. The doubles weren't changning though. I spend almost 2 hours on googling how to stub `attr_reader` without a success.
-
-Because of the fact, I've decided to create an `ItemDouble` class inside of the gilded_rose_spec, that was in face a mirror reflection of the `Item` class. This was I kept my `Item` class isolated and was able to avoid the `attr_reader` problem. This is how I solved it:
-
-```ruby
-class ItemDouble
-
-  attr_accessor :name, :sell_in, :quality
-
-  def initialize(name, sell_in, quality)
-    @name = name
-    @sell_in = sell_in
-    @quality = quality
-  end
-
-  def show_data
-    "#{@name}, #{@sell_in}, #{@quality}"
-  end
-
-end
-
-describe GildedRose do
-
-  vest = ItemDouble.new("+5 Dexterity Vest", 1, 10)
-  brie = ItemDouble.new("Aged Brie", 2, 0)
-  quality_brie = ItemDouble.new("Aged Brie", 2, 50)
-  elixir = ItemDouble.new("Elixir of the Mongoose", 5, 7)
-  sulfuras1 = ItemDouble.new("Sulfuras, Hand of Ragnaros", 0, 80)
-  sulfuras2 = ItemDouble.new("Sulfuras, Hand of Ragnaros", 0, 81)
-  backstage0 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 0, 20)
-  backstage1 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 15, 20)
-  backstage2 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 10, 49)
-  backstage3 = ItemDouble.new("Backstage passes to a TAFKAL80ETC concert", 5, 49)
-  cake = ItemDouble.new("Conjured Mana Cake", 3, 6)
-  cake_zero = ItemDouble.new("Conjured Mana Cake", 3, 0)
-```
+I would create separate classes for each type of object. Each one of them would have an update method, characteristic for this particular class.
