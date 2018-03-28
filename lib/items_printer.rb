@@ -2,7 +2,14 @@ require_relative 'gilded_rose'
 require_relative 'item'
 
 class ItemsPrinter
-end 
+
+  attr_reader :days
+
+  def initialize(days)
+    @days = days
+  end
+
+end
 
 
 puts "OMGHAI!"
