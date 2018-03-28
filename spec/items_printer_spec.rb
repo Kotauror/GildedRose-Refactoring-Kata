@@ -4,7 +4,8 @@ describe ItemsPrinter do
 
   subject(:items_printer) { described_class.new(1)}
   subject(:items_printer_no_days) { described_class.new}
-  items = ["Justyna", 1, 2]
+  let(:vest) {double('+5 Dexterity Vest', :name => 'Vest', :sell_in => 1, :quality => 10)}
+  let(:brie) {double('Aged Brie', :name => 'Aged Brie', :sell_in => 2, :quality => 0)}
 
   context 'Initialization' do
     describe '#initialize' do
@@ -20,26 +21,15 @@ describe ItemsPrinter do
   context 'Printing Items' do
     describe '#print_items(items)' do
       it 'prints information about the items' do
-        expect{items_printer.print_items(items)}.to output(
+        allow(vest).to receive(:show_data).and_return("Vest, 1, 10")
+        allow(brie).to receive(:show_data).and_return("Aged Brie, 2, 0")
+        expect{items_printer.print_items([vest, brie])}.to output(
           "-------- day 0 --------\n" +
-          "name, sellIn, quality\n"
+          "name, sellIn, quality\n" +
+          "Vest, 1, 10\nAged Brie, 2, 0\n\n"
         ).to_stdout
       end
     end
   end
 
-
-
 end
-
-
-
-# "+5 Dexterity Vest, 10, 20\n" +
-# 'Aged Brie, 2, 0' +
-# 'Elixir of the Mongoose, 5, 7' +
-# 'Sulfuras, Hand of Ragnaros, 0, 80' +
-# 'Sulfuras, Hand of Ragnaros, -1, 80' +
-# 'Backstage passes to a TAFKAL80ETC concert, 15, 20' +
-# 'Backstage passes to a TAFKAL80ETC concert, 10, 49' +
-# 'Backstage passes to a TAFKAL80ETC concert, 5, 49' +
-# 'Conjured Mana Cake, 3, 6'
