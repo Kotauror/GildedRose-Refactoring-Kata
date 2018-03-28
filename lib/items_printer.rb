@@ -1,6 +1,4 @@
-#!/usr/bin/ruby -w
-
-require File.join(File.dirname(__FILE__), 'gilded_rose')
+require_relative 'gilded_rose'
 
 puts "OMGHAI!"
 items = [
@@ -16,10 +14,7 @@ items = [
   Item.new(name="Conjured Mana Cake", sell_in=3, quality=6), # <-- :O
 ]
 
-days = 2
-if ARGV.size > 0
-  days = ARGV[0].to_i + 1
-end
+days = 3
 
 gilded_rose = GildedRose.new items
 (0...days).each do |day|
@@ -30,4 +25,5 @@ gilded_rose = GildedRose.new items
   end
   puts ""
   gilded_rose.update_quality
+  days += 1
 end
