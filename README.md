@@ -138,3 +138,7 @@ end
 ## If I had more time
 
 I would create separate classes for each type of object. Each one of them would have an update method, characteristic for this particular class.
+
+## Additional notes
+
+See the gist on testing written during soling this kata: https://gist.github.com/Kotauror/09ac1c46162b1fc40f5d4eb301967e26. 
