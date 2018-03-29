@@ -31,7 +31,7 @@ describe GildedRose do
   context 'Updating quality' do
     describe 'update_brie' do
       it 'updates the quality of the brie when its less than 50' do
-        expect(brie).to receive(:quality=).with(1)
+        expect(brie).to receive(:quality=).with(brie.quality + 1)
         rose.update_brie(brie)
       end
       it 'doesnt update quality of brie when its already 50' do
